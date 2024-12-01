@@ -1,6 +1,6 @@
 open Core
 
-let run_day solve_2 solve_1 input =
+let run_day solve_1 solve_2 input =
   if Array.length (Sys.get_argv ()) <> 2 then
     printf "Invalid usage: Please specify the part.\n"
   else
