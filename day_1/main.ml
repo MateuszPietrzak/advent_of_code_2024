@@ -30,11 +30,8 @@ let solve_2 (a, b) =
 let () =
   let input =
     In_channel.read_lines "day_1/input.in"
-    |> List.concat_map ~f:(fun line -> String.split line ~on:' ')
-    |> List.map ~f:(fun elem -> Int.of_string_opt elem)
-    |> List.filter ~f:(fun elem ->
-           match elem with None -> false | Some _ -> true)
-    |> List.map ~f:(fun elem -> match elem with None -> 0 | Some x -> x)
+    |> List.map ~f:Aoc.int_list_of_line
+    |> List.concat
     |> List.fold ~init:([], []) ~f:(fun (a, b) x ->
            if List.length a > List.length b then (a, x :: b) else (x :: a, b))
   in

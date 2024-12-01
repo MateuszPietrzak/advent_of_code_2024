@@ -12,3 +12,10 @@ let run_day solve_1 solve_2 input =
         | 1 -> solve_1 input
         | 2 -> solve_2 input
         | _ -> printf "Invalid usage: Part %d not allowed.\n" part)
+
+let int_list_of_line line =
+  let split_list = String.split_on_chars line ~on:[ ' '; '\n'; '\t' ] in
+  let trimmed =
+    List.filter split_list ~f:(fun x -> match x with "" -> false | _ -> true)
+  in
+  List.map trimmed ~f:Int.of_string
