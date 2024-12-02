@@ -13,10 +13,10 @@ let line_safe_2 operator input =
     | [ x; y ] -> operator x y || not already_skipped
     | [ x; y; z ] ->
         (operator x y && operator y z)
-        || ((not already_skipped) && (operator x y || operator x z))
+        || (not already_skipped && (operator x y || operator x z))
     | x :: y :: z :: xs ->
         (operator x y && aux already_skipped (y :: z :: xs))
-        || ((not already_skipped) && operator x z && aux true (z :: xs))
+        || (not already_skipped && operator x z && aux true (z :: xs))
   in
   aux false input
   || match List.tl input with None -> true | Some tl -> aux true tl
