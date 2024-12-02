@@ -22,3 +22,5 @@ result
 
 .DS_Store
 nix/profiles/
+
+*.in
