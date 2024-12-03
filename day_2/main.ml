@@ -41,8 +41,8 @@ let solve_2 input =
   let result = get_result line_safe_2 input in
   printf "%d\n" result
 
+let parse_input lines = 
+  lines |> List.map ~f:Aoc.int_list_of_line
+
 let () =
-  let input =
-    In_channel.read_lines "day_2/input.in" |> List.map ~f:Aoc.int_list_of_line
-  in
-  Aoc.run_day solve_1 solve_2 input
+  Aoc.run_day solve_1 solve_2 parse_input

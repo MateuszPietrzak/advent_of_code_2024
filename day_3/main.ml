@@ -45,9 +45,9 @@ let solve_2 input =
   let result = acc_result 0 true matches in
   printf "%d\n" result
 
-let () =
-  let input =
-    In_channel.read_lines "day_3/input.in"
+let parse_input lines = 
+  lines 
     |> List.fold ~init:"" ~f:(fun acc s -> acc ^ s)
-  in
-  Aoc.run_day solve_1 solve_2 input
+
+let () =
+  Aoc.run_day solve_1 solve_2 parse_input

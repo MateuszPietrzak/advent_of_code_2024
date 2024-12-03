@@ -27,12 +27,12 @@ let solve_2 (a, b) =
   in
   printf "%d\n" result
 
+let parse_input lines =
+  lines
+  |> List.map ~f:Aoc.int_list_of_line
+  |> List.concat
+  |> List.fold ~init:([], []) ~f:(fun (a, b) x ->
+         if List.length a > List.length b then (a, x :: b) else (x :: a, b))
+
 let () =
-  let input =
-    In_channel.read_lines "day_1/input.in"
-    |> List.map ~f:Aoc.int_list_of_line
-    |> List.concat
-    |> List.fold ~init:([], []) ~f:(fun (a, b) x ->
-           if List.length a > List.length b then (a, x :: b) else (x :: a, b))
-  in
-  Aoc.run_day solve_1 solve_2 input
+  Aoc.run_day solve_1 solve_2 parse_input 
