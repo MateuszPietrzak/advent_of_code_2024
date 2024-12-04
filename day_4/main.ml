@@ -50,8 +50,43 @@ let solve_1 input =
   in
   let diag_1_result = count_diag char_matrix Right in
   let diag_2_result = count_diag char_matrix Left in
-  printf "%d\n" @@ (horizontal_result + vertical_result + diag_1_result + diag_2_result)
+  printf "%d\n"
+  @@ (horizontal_result + vertical_result + diag_1_result + diag_2_result)
 
-let solve_2 _input = ()
+let solve_2 input =
+  let char_matrix =
+    List.map input ~f:String.to_list
+    |> Array.of_list |> Array.map ~f:Array.of_list
+  in
+  let height = Array.length char_matrix in
+  let width = Array.length char_matrix.(0) in
+  let res = ref 0 in
+  let eq i j c = Char.equal char_matrix.(i).(j) c in
+  for i = 1 to height - 2 do
+    for j = 1 to width - 2 do
+      if
+        eq i j 'A'
+        && (eq (i - 1) (j - 1) 'M'
+            && eq (i + 1) (j - 1) 'M'
+            && eq (i - 1) (j + 1) 'S'
+            && eq (i + 1) (j + 1) 'S'
+           || eq (i - 1) (j - 1) 'M'
+              && eq (i + 1) (j - 1) 'S'
+              && eq (i - 1) (j + 1) 'M'
+              && eq (i + 1) (j + 1) 'S'
+           || eq (i - 1) (j - 1) 'S'
+              && eq (i + 1) (j - 1) 'S'
+              && eq (i - 1) (j + 1) 'M'
+              && eq (i + 1) (j + 1) 'M'
+           || eq (i - 1) (j - 1) 'S'
+              && eq (i + 1) (j - 1) 'M'
+              && eq (i - 1) (j + 1) 'S'
+              && eq (i + 1) (j + 1) 'M')
+      then Int.incr res
+      else ()
+    done
+  done;
+  printf "%d\n" !res
+
 let parse_input lines = lines
 let () = Aoc.run_day solve_1 solve_2 parse_input
