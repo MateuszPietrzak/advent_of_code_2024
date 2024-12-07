@@ -1,18 +1,38 @@
 open Core
 
-let rec is_possible (res, equation) =
+let rec is_possible res equation operators =
   match equation with
   | [] -> 0
   | [ x ] -> if equal x res then x else 0
   | x :: y :: xs ->
-      let add = is_possible (res, (x + y) :: xs) in
-      if not @@ equal add 0 then add else is_possible (res, (x * y) :: xs)
+      List.fold operators ~init:0 ~f:(fun acc op ->
+          if not @@ equal acc 0 then acc
+          else
+            let rs = is_possible res (op x y :: xs) operators in
+            rs)
 
 let solve_1 input =
-  let res = List.map input ~f:is_possible |> List.fold ~init:0 ~f:( + ) in
+  let res =
+    List.map input ~f:(fun (a, b) -> is_possible a b [ ( + ); ( * ) ])
+    |> List.fold ~init:0 ~f:( + )
+  in
   printf "%d\n" res
 
-let solve_2 _input = ()
+let solve_2 input =
+  let res =
+    List.map input ~f:(fun (a, b) ->
+        is_possible a b
+          [
+            ( + );
+            ( * );
+            (fun x y ->
+              let str1 = Int.to_string x in
+              let str2 = Int.to_string y in
+              Int.of_string (str1 ^ str2));
+          ])
+    |> List.fold ~init:0 ~f:( + )
+  in
+  printf "%d\n" res
 
 let parse_input lines =
   let open Re in
