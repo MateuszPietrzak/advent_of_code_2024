@@ -12,10 +12,14 @@ let run_day solve_1 solve_2 parse_input =
         let arg_file = (Sys.get_argv ()).(1) in
         try
           let lines = In_channel.read_lines arg_file in
-          match part with
+          let t1 = Time_ns.now () in
+          (match part with
           | 1 -> solve_1 (parse_input lines)
           | 2 -> solve_2 (parse_input lines)
-          | _ -> printf "Invalid usage: Part %d not allowed.\n" part
+          | _ -> printf "Invalid usage: Part %d not allowed.\n" part);
+          let t2 = Time_ns.now () in
+          let elapsed = Time_ns.diff t2 t1 in
+          printf "Elapsed running time: %.6f\n" (Time_ns.Span.to_sec elapsed)
         with Sys_error _ -> printf "Invalid usage: Could not read the file.\n")
 
 let int_list_of_line line =
