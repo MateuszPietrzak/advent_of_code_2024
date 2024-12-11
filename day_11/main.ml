@@ -5,16 +5,16 @@ let memo = Array.init 76 ~f:(fun _ -> Hashtbl.create (module Int))
 let rec get_num_stones blinks num =
   match Hashtbl.find memo.(blinks) num with
   | None ->
+      let len =
+        if num = 0 then 1 else Int.of_float (Float.log10 (Int.to_float num)) + 1
+      in
       let res =
         if blinks = 0 then 1
         else if num = 0 then get_num_stones (blinks - 1) 1
-        else if String.length (Int.to_string num) % 2 = 0 then
-          let s = Int.to_string num in
-          let len = String.length s in
-          let s1 = String.drop_prefix s (len / 2) in
-          let s2 = String.drop_suffix s (len / 2) in
-          get_num_stones (blinks - 1) (Int.of_string s1)
-          + get_num_stones (blinks - 1) (Int.of_string s2)
+        else if len % 2 = 0 then
+          let pow = Int.pow 10 (len / 2) in
+          get_num_stones (blinks - 1) (num / pow)
+          + get_num_stones (blinks - 1) (num % pow)
         else get_num_stones (blinks - 1) (num * 2024)
       in
       Hashtbl.set memo.(blinks) ~key:num ~data:res;
