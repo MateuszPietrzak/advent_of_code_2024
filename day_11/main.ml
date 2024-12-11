@@ -22,16 +22,12 @@ let rec get_num_stones blinks num =
   | Some x -> x
 
 let solve_1 input =
-  List.iter input ~f:(fun x -> printf "%d " x);
-  printf "\n";
   let res =
     List.fold input ~init:0 ~f:(fun acc x -> acc + get_num_stones 25 x)
   in
   printf "%d\n" res
 
 let solve_2 input =
-  List.iter input ~f:(fun x -> printf "%d " x);
-  printf "\n";
   let res =
     List.fold input ~init:0 ~f:(fun acc x -> acc + get_num_stones 75 x)
   in
