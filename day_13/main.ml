@@ -3,30 +3,33 @@ open Core
 type point = { x : int; y : int }
 type machine = { but_a : point; but_b : point; prize : point }
 
-let print_machine m =
-  printf "Machine:\nA -> %d %d\nB -> %d %d\nPrize -> %d %d\n\n" m.but_a.x
-    m.but_a.y m.but_b.x m.but_b.y m.prize.x m.prize.y
-
 let get_best_score m =
-  let rec aux b_presses x y =
-    if x % m.but_a.x = 0 && y % m.but_a.y = 0 && x / m.but_a.x = y / m.but_a.y
-    then
-      min
-        (b_presses + (3 * (x / m.but_a.x)))
-        (aux (b_presses + 1) (x - m.but_b.x) (y - m.but_b.y))
-    else if x - m.but_b.x >= 0 && y - m.but_b.y >= 0 then
-      aux (b_presses + 1) (x - m.but_b.x) (y - m.but_b.y)
-    else Int.max_value
-  in
-  let res = aux 0 m.prize.x m.prize.y in
-  if res = Int.max_value then 0 else res
+  let w = m.but_a.x * m.but_b.y - m.but_a.y * m.but_b.x in
+  let w_a = m.prize.x * m.but_b.y - m.prize.y * m.but_b.x in
+  let w_b = m.but_a.x * m.prize.y - m.but_a.y * m.prize.x in
+  if w <> 0 && ((abs w_a) % (abs w)) = 0 && ((abs w_b) % (abs w)) = 0 then
+    let a = w_a / w in
+    let b = w_b / w in
+    a * 3 + b
+  else 0
 
 let solve_1 input =
-  List.iter input ~f:(fun m -> print_machine m);
   let res = List.fold input ~init:0 ~f:(fun acc m -> acc + get_best_score m) in
   printf "%d\n" res
 
-let solve_2 _input = ()
+let solve_2 input =
+  let scaled_input =
+    List.map input ~f:(fun m ->
+        {
+          m with
+          prize =
+            { x = m.prize.x + 10000000000000; y = m.prize.y + 10000000000000 };
+        })
+  in
+  let res =
+    List.fold scaled_input ~init:0 ~f:(fun acc m -> acc + get_best_score m)
+  in
+  printf "%d\n" res
 
 let parse_input lines =
   let open Re in
