@@ -1,3 +1,5 @@
 (executable
  (name main)
- (libraries base core aoc))
+ (libraries base core aoc)
+ (preprocess
+  (pps  ppx_sexp_conv ppx_compare ppx_hash)))
