@@ -23,10 +23,10 @@ let get_combo computer = function
   | 6 -> computer.reg_c
   | _ -> assert false
 
-let solve_1 computer =
-  print_computer computer;
+let get_res computer =
   let pc = ref 0 in
   let program_length = Array.length computer.program in
+  let res = ref [] in
   while !pc < program_length do
     let opcode = computer.program.(!pc) in
     let operand = computer.program.(!pc + 1) in
@@ -55,7 +55,7 @@ let solve_1 computer =
         pc := !pc + 2
     | 5 ->
         (* out *)
-        printf "%d," (Int.bit_and (get_combo computer operand) 0b111);
+        res := !res @ [ Int.bit_and (get_combo computer operand) 7 ];
         pc := !pc + 2
     | 6 ->
         (* bdv *)
@@ -74,9 +74,36 @@ let solve_1 computer =
     | _ -> assert false);
     ()
   done;
-  printf "\n"
+  !res
 
-let solve_2 _input = ()
+let solve_1 computer =
+  print_computer computer;
+  let res = get_res computer in
+  let str_res = List.map res ~f:Int.to_string |> String.concat ~sep:"," in
+  printf "%s \n" str_res
+
+let solve_2 computer =
+  let program = List.of_array computer.program in
+  let rec aux high program_rev =
+    match program_rev with
+    | [] -> Some high
+    | p :: ps ->
+        List.range 0 8
+        |> List.fold ~init:None ~f:(fun acc x ->
+               let reg_a = Int.(bit_or (high lsl 3) x) in
+               match acc with
+               | None ->
+                   let calc =
+                     Int.(
+                       bit_and
+                         (bit_xor (bit_xor reg_a 6) (reg_a lsr bit_xor x 3))
+                         7)
+                   in
+                   if calc = p then aux reg_a ps else None
+               | Some x -> Some x)
+  in
+  let res = aux 0 (List.rev program) in
+  match res with None -> printf "Not found...\n" | Some x -> printf "%d\n" x
 
 let parse_input lines =
   let open Re in
