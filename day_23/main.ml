@@ -15,6 +15,13 @@ let edge_list_to_adj_list list =
       res.(b) <- a :: res.(b));
   res
 
+let edge_list_to_adj_matrix list =
+  let res = Array.init 1024 ~f:(fun _ -> Array.init 1024 ~f:(const false)) in
+  List.iter list ~f:(fun (a, b) ->
+      res.(a).(b) <- true;
+      res.(b).(a) <- true);
+  res
+
 let solve_1 input =
   let adj_list = edge_list_to_adj_list input in
   let set = ref @@ Set.empty (module Int) in
@@ -35,7 +42,46 @@ let solve_1 input =
       ());
   printf "%d\n" (Set.length !set)
 
-let solve_2 _input = ()
+let find_max_clique ~matrix =
+  let is_clique list =
+    List.fold (List.cartesian_product list list) ~init:true
+      ~f:(fun acc (i, j) ->
+        if not acc then acc else if i = j then acc else matrix.(i).(j))
+  in
+  let rec aux i l =
+    if List.length l >= 13 then (List.length l, l)
+    else
+      List.fold
+        (List.range (i + 1) 1023)
+        ~init:(0, l)
+        ~f:(fun (max_size, max_list) j ->
+          let new_l = j :: l in
+          if is_clique new_l then
+            let rec_max_size, rec_max_list = aux j new_l in
+            if List.length new_l > max_size then
+              if List.length new_l > rec_max_size then (List.length new_l, new_l)
+              else (rec_max_size, rec_max_list)
+            else if max_size > rec_max_size then (max_size, max_list)
+            else (rec_max_size, rec_max_list)
+          else (max_size, max_list))
+  in
+  let m, list = aux 0 [] in
+  printf "Max clique size: %d\n" m;
+  list
+
+let solve_2 input =
+  let adj_matrix = edge_list_to_adj_matrix input in
+  let list = find_max_clique ~matrix:adj_matrix in
+  let res =
+    List.sort list ~compare:Int.compare
+    |> List.fold ~init:[] ~f:(fun acc x ->
+           let dif = Char.to_int 'a' in
+           let char_1 = Char.of_int_exn ((x / 31) + dif)
+           and char_2 = Char.of_int_exn ((x % 31) + dif) in
+           String.of_list [ char_1; char_2 ] :: acc)
+    |> List.rev |> String.concat ~sep:","
+  in
+  printf "%s\n" res
 
 let parse_input lines =
   let open Re in
